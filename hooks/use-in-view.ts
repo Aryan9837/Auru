@@ -1,0 +1,42 @@
+"use client";
+
+import { useRef, useState, useEffect } from "react";
+
+interface UseInViewOptions {
+  threshold?: number;
+  rootMargin?: string;
+  once?: boolean;
+}
+
+export function useInView(options: UseInViewOptions = {}) {
+  const { threshold = 0.1, rootMargin = "-50px", once = true } = options;
+  const ref = useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const supportsScrollDriven =
+      typeof CSS !== "undefined" && CSS.supports("animation-timeline", "view()");
+
+    if (supportsScrollDriven) return;
+
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          if (once) observer.unobserve(element);
+        } else if (!once) {
+          setIsInView(false);
+        }
+      },
+      { threshold, rootMargin }
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [threshold, rootMargin, once]);
+
+  return { ref, isInView };
+}

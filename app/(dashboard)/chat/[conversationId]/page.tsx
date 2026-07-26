@@ -64,7 +64,7 @@ async function ConversationData({
     <Chat
       conversationId={conversation.id}
       characterName={conversation.character.name}
-      initialMessages={conversation.messages.reverse().map((m) => ({
+      initialMessages={conversation.messages.reverse().map((m: { id: string; role: string; content: string }) => ({
         id: m.id,
         role: m.role,
         content: m.content,

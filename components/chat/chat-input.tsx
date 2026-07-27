@@ -11,6 +11,7 @@ interface ChatInputProps {
 export const ChatInput = memo(function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const prevDisabledRef = useRef(disabled);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -18,6 +19,15 @@ export const ChatInput = memo(function ChatInput({ onSend, disabled }: ChatInput
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
     }
   }, [input]);
+
+  useEffect(() => {
+    if (prevDisabledRef.current && !disabled && textareaRef.current) {
+      requestAnimationFrame(() => {
+        textareaRef.current?.focus();
+      });
+    }
+    prevDisabledRef.current = disabled;
+  }, [disabled]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

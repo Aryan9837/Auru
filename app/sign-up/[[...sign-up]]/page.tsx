@@ -10,7 +10,6 @@ export default function SignUpPage() {
       </Link>
       <SignUp
         routing="hash"
-        forceRedirectUrl="/explore"
         appearance={{
           elements: {
             rootBox: "w-full max-w-sm",

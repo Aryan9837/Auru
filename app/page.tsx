@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { Hero } from "@/components/landing/hero";
 import { About } from "@/components/landing/about";
@@ -11,26 +9,36 @@ import { Showcase } from "@/components/landing/showcase";
 import { Testimonials } from "@/components/landing/testimonials";
 import { Cta } from "@/components/landing/cta";
 import { LandingFooter } from "@/components/landing/footer";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (isSignedIn) {
+    if (isLoaded && isSignedIn) {
       router.replace("/explore");
     }
-  }, [isSignedIn, router]);
+  }, [isLoaded, isSignedIn, router]);
+
+  if (!isLoaded) {
+    return null;
+  }
+
+  if (isSignedIn) {
+    return null;
+  }
 
   return (
     <div className="landing-page">
-      <Hero isSignedIn={isSignedIn} />
+      <Hero isSignedIn={false} />
       <About />
       <Marquee />
       <Features />
       <Showcase />
       <Testimonials />
-      <Cta isSignedIn={isSignedIn} />
+      <Cta isSignedIn={false} />
       <LandingFooter />
     </div>
   );

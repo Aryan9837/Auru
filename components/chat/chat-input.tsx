@@ -11,7 +11,6 @@ interface ChatInputProps {
 export const ChatInput = memo(function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const prevDisabledRef = useRef(disabled);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -19,15 +18,6 @@ export const ChatInput = memo(function ChatInput({ onSend, disabled }: ChatInput
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
     }
   }, [input]);
-
-  useEffect(() => {
-    if (prevDisabledRef.current && !disabled && textareaRef.current) {
-      requestAnimationFrame(() => {
-        textareaRef.current?.focus();
-      });
-    }
-    prevDisabledRef.current = disabled;
-  }, [disabled]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,16 +45,15 @@ export const ChatInput = memo(function ChatInput({ onSend, disabled }: ChatInput
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
+          placeholder={disabled ? "Waiting for response..." : "Type a message..."}
           rows={1}
-          disabled={disabled}
-          className="flex-1 resize-none bg-transparent border border-border rounded-[var(--radius-lg)] px-4 py-3 text-[15px] text-foreground placeholder:text-muted outline-none focus:border-accent transition-colors max-h-[200px] leading-relaxed disabled:opacity-50"
+          className="flex-1 resize-none bg-transparent border border-border rounded-lg px-4 py-3 text-[15px] text-foreground placeholder:text-muted outline-none focus:border-accent transition-colors max-h-50 leading-relaxed"
         />
         <Button
           type="submit"
           disabled={!input.trim() || disabled}
           size="md"
-          className="shrink-0 rounded-[var(--radius-lg)] px-4"
+          className="shrink-0 rounded-lg px-4"
         >
           <svg
             width="18"
